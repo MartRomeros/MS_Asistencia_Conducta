@@ -4,6 +4,9 @@ import helmet from "helmet";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
+import docentesRouter from "./routes/docentes.routes";
+import cursosRouter from "./routes/cursos.routes";
+import { errorMiddleware } from "./middlewares/error.middleware";
 
 const app = express();
 
@@ -15,8 +18,15 @@ app.use(express.json());
 // Documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// Routes
+app.use("/api/docentes", docentesRouter);
+app.use("/api/cursos", cursosRouter);
+
 app.get("/health", (req, res) => {
   res.json({ status: "UP" });
 });
+
+// Error handling
+app.use(errorMiddleware);
 
 export default app;

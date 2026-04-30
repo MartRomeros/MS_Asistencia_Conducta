@@ -3,7 +3,8 @@ description: Workflow que permite la revision y ejecucion de specs. Revisando sp
 ---
 
 - Realiza el spec que el usuario te indique
-- Revisa tus reglas establecidas y echa un vistazo a `context/`
+- Revisa `context/`
+- Revisa tu `gemini.md` para que entiendas como se debe estructurar este proyecto
 - Revisa specs anteriores si crees que no hay mucha informacion pasada
 - Utiliza las skills necesarias en `skills/`
 - Si el spec es muy ambiguo realiza un maximo de 3 preguntas al usuario para entender
