@@ -1,0 +1,4 @@
+- Genera la logica para traer los cursos segun el docente
+- El id del docente vendra en un jwt en las .env ya tienes la clave para decifrarlo.
+- documentarlo en swagger
+- crear un servicio para decifrar el jwt.
