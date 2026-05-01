@@ -57,5 +57,5 @@ Este es el formato en que vendra:
       "tipo_asistencia": "Presencial"
     }
   ]
-}
+}   
 ```

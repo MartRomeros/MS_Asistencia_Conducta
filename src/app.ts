@@ -6,6 +6,7 @@ import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
 import docentesRouter from "./routes/docentes.routes";
 import cursosRouter from "./routes/cursos.routes";
+import asistenciaRouter from "./routes/asistencia.routes";
 import { errorMiddleware } from "./middlewares/error.middleware";
 
 const app = express();
@@ -21,6 +22,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Routes
 app.use("/api/docentes", docentesRouter);
 app.use("/api/cursos", cursosRouter);
+app.use("/api/asistencia", asistenciaRouter);
 
 app.get("/health", (req, res) => {
   res.json({ status: "UP" });
