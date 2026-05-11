@@ -1,5 +1,5 @@
 {
-  "exclude": ["dist","node_modules"],
+  "exclude": ["dist", "node_modules", "vitest.config.ts"],
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
@@ -44,5 +44,5 @@
 
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-  }
+  },
 }

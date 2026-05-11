@@ -9,3 +9,12 @@ export async function registrarAsistenciaHandler(req: Request, res: Response) {
     message: "Asistencia registrada correctamente"
   });
 }
+
+export async function getResumenAsistenciaAlumnoHandler(req: Request, res: Response) {
+  const { estudiante_id } = req.params;
+  const resumen = await asistenciaService.getResumenAsistenciaAlumno(Number(estudiante_id));
+  res.status(200).json({
+    success: true,
+    data: resumen
+  });
+}

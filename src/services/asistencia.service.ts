@@ -4,3 +4,7 @@ import { AsistenciaRegistro } from "../models/asistencia.repository";
 export async function registrarAsistencia(data: AsistenciaRegistro): Promise<void> {
   await asistenciaRepo.saveAsistencia(data);
 }
+
+export async function getResumenAsistenciaAlumno(estudianteId: number) {
+  return await asistenciaRepo.getResumenAsistenciaAlumno(estudianteId);
+}

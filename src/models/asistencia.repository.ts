@@ -27,7 +27,7 @@ export async function saveAsistencia(data: AsistenciaRegistro): Promise<void> {
       INSERT INTO asistencia (estudiante_id, cad_id, fecha, estado, tipo_asistencia)
       VALUES ($1, $2, $3, $4, $5)
     `;
-    
+
     for (const asis of data.asistencias) {
       await client.query(insertQuery, [
         asis.estudiante_id,
@@ -42,6 +42,31 @@ export async function saveAsistencia(data: AsistenciaRegistro): Promise<void> {
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;
+  } finally {
+    client.release();
+  }
+}
+
+
+export async function getResumenAsistenciaAlumno(estudianteId: number) {
+  const client = await pool.connect();
+  try {
+    const query = `
+      SELECT
+            a.nombre AS "asignaturaNombre",
+            COUNT(asi.asistencia_id) FILTER (WHERE asi.estado = 'Presente') AS "clasesAsistidas",
+            COUNT(asi.asistencia_id) FILTER (WHERE asi.estado = 'Ausente') AS "clasesAusentes",
+            COUNT(asi.asistencia_id) FILTER (WHERE asi.estado = 'Tardanza') AS "clasesTardanza",
+            COUNT(asi.asistencia_id) FILTER (WHERE asi.estado = 'Justificado') AS "clasesJustificadas"
+      FROM estudiantes e
+      INNER JOIN curso_asignatura_docente cad ON cad.curso_id = e.curso_id
+      INNER JOIN asignaturas a ON cad.asignatura_id = a.asignatura_id
+      LEFT JOIN asistencia asi ON asi.estudiante_id = e.estudiante_id AND asi.cad_id = cad.id
+      WHERE e.estudiante_id = $1
+      GROUP BY a.asignatura_id, a.nombre
+    `;
+    const result = await client.query(query, [estudianteId]);
+    return result.rows;
   } finally {
     client.release();
   }

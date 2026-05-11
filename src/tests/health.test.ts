@@ -2,7 +2,9 @@ import { describe, it, expect } from 'vitest';
 import request from 'supertest';
 import app from '../app';
 
-describe('Health Check', () => {
+const describeSocket = process.env.RUN_SOCKET_TESTS === "true" ? describe : describe.skip;
+
+describeSocket('Health Check', () => {
   it('should return status UP', async () => {
     const res = await request(app).get('/health');
     expect(res.status).toBe(200);

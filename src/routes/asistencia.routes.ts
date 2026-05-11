@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registrarAsistenciaHandler } from "../controllers/asistencia.controller";
+import { registrarAsistenciaHandler, getResumenAsistenciaAlumnoHandler } from "../controllers/asistencia.controller";
 import { validate } from "../middlewares/validate.middleware";
 import { RegistrarAsistenciaSchema } from "../schemas/asistencia.schema";
 
@@ -61,5 +61,58 @@ const router = Router();
  *         description: Error interno del servidor
  */
 router.post("/", validate(RegistrarAsistenciaSchema), registrarAsistenciaHandler);
+
+/**
+ * @openapi
+ * /api/asistencia/estudiante/{estudiante_id}:
+ *   get:
+ *     summary: Obtiene el resumen de asistencia de un estudiante por asignatura
+ *     description: Retorna un listado con las asignaturas del estudiante y el conteo de asistencias, inasistencias, tardanzas y justificaciones en cada una.
+ *     tags:
+ *       - Asistencia
+ *     parameters:
+ *       - in: path
+ *         name: estudiante_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del estudiante
+ *     responses:
+ *       200:
+ *         description: Resumen de asistencia obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       asignaturaNombre:
+ *                         type: string
+ *                         example: "Matemáticas"
+ *                       clasesAsistidas:
+ *                         type: string
+ *                         example: "15"
+ *                       clasesAusentes:
+ *                         type: string
+ *                         example: "2"
+ *                       clasesTardanza:
+ *                         type: string
+ *                         example: "1"
+ *                       clasesJustificadas:
+ *                         type: string
+ *                         example: "0"
+ *       404:
+ *         description: Estudiante no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.get("/estudiante/:estudiante_id", getResumenAsistenciaAlumnoHandler);
 
 export default router;
