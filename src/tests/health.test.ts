@@ -15,4 +15,5 @@ describeSocket('Health Check', () => {
     const res = await request(app).get('/api-docs/');
     expect(res.status).toBe(200);
   });
+  
 });

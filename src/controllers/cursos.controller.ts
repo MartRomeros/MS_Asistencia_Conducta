@@ -2,6 +2,31 @@ import { Request, Response } from "express";
 import { verifyToken } from "../services/jwt.service";
 import { getCursosParaDocente, getAlumnosDelCurso } from "../services/cursos.service";
 
+function getAuthenticatedDocenteId(req: Request, res: Response): number | null {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    res.status(401).json({
+      success: false,
+      message: "Token de autorización requerido",
+    });
+    return null;
+  }
+
+  const token = authHeader.split(" ")[1] as string;
+  const payload = verifyToken(token);
+
+  if (payload.role !== "Docente") {
+    res.status(403).json({
+      success: false,
+      message: "No tienes permisos para acceder a este recurso",
+    });
+    return null;
+  }
+
+  return payload.id;
+}
+
 /**
  * GET /api/docentes/cursos
  *
@@ -12,33 +37,14 @@ export async function getCursosDocente(
   req: Request,
   res: Response
 ): Promise<void> {
-  const authHeader = req.headers.authorization;
+  const docenteId = getAuthenticatedDocenteId(req, res);
+  if (!docenteId) return;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    res.status(401).json({
-      success: false,
-      message: "Token de autorización requerido",
-    });
-    return;
-  }
-
-  const token = authHeader.split(" ")[1] as string;
-  const payload = verifyToken(token);
-
-  // Verificar que el usuario tenga el rol de Docente
-  if (payload.role !== "Docente") {
-    res.status(403).json({
-      success: false,
-      message: "No tienes permisos para acceder a este recurso",
-    });
-    return;
-  }
-
-  const cursos = await getCursosParaDocente(payload.id);
+  const cursos = await getCursosParaDocente(docenteId);
 
   res.status(200).json({
     success: true,
-    docente_id: payload.id,
+    docente_id: docenteId,
     data: cursos,
   });
 }
@@ -48,31 +54,11 @@ export async function getCursosDocente(
  *
  * Obtiene los alumnos correspondientes a un curso específico.
  */
-export async function getAlumnosCurso(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const authHeader = req.headers.authorization;
+export async function getAlumnosCurso(req: Request,res: Response): Promise<void> {
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    res.status(401).json({
-      success: false,
-      message: "Token de autorización requerido",
-    });
-    return;
-  }
-
-  const token = authHeader.split(" ")[1] as string;
-  const payload = verifyToken(token);
-
-  // Podríamos validar si el rol es Docente u otro rol con permisos
-  if (payload.role !== "Docente") {
-    res.status(403).json({
-      success: false,
-      message: "No tienes permisos para acceder a este recurso",
-    });
-    return;
-  }
+  const docenteId = getAuthenticatedDocenteId(req, res);
+  
+  if (!docenteId) return;
 
   const cursoId = parseInt(req.params.id as string, 10);
   
@@ -88,6 +74,7 @@ export async function getAlumnosCurso(
 
   res.status(200).json({
     success: true,
+    docente_id: docenteId,
     curso_id: cursoId,
     data: alumnos,
   });
