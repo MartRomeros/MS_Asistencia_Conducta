@@ -43,3 +43,8 @@ DB_PORT=5432
 DB_DATABASE=auth_db
 JWT_SECRET=tu_secreto_para_jwt
 ```
+para construir imagen de docker
+`docker build -t ms_comunicaciones .`
+
+levantar contenedor
+`docker run -d --name ms_asistencia -p 3001:3001 --network devops_default ms_asistencia`
