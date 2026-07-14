@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getCursosDocente } from "../controllers/cursos.controller";
+import { authenticate, requireRole } from "../middlewares/auth.middleware";
 
 const router = Router();
 
@@ -87,6 +88,6 @@ const router = Router();
  *           type: string
  *           example: "Token de autorización requerido"
  */
-router.get("/cursos", getCursosDocente);
+router.get("/cursos", authenticate, requireRole("Docente"), getCursosDocente);
 
 export default router;

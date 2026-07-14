@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { registrarAsistenciaHandler, getResumenAsistenciaAlumnoHandler } from "../controllers/asistencia.controller";
 import { validate } from "../middlewares/validate.middleware";
+import { authenticate, requireRole } from "../middlewares/auth.middleware";
 import { RegistrarAsistenciaSchema } from "../schemas/asistencia.schema";
 
 const router = Router();
@@ -13,6 +14,8 @@ const router = Router();
  *     description: Guarda el registro de asistencia de los alumnos para un curso-asignatura-docente (cad_id) y fecha específicos. Si ya existe un registro para la misma fecha y cad_id, este se actualizará de forma completa.
  *     tags:
  *       - Asistencia
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -57,10 +60,20 @@ const router = Router();
  *                   example: "Asistencia registrada correctamente"
  *       400:
  *         description: Datos de entrada inválidos
+ *       401:
+ *         description: Token ausente, inválido o expirado
+ *       403:
+ *         description: Usuario sin permisos (requiere rol Docente)
  *       500:
  *         description: Error interno del servidor
  */
-router.post("/", validate(RegistrarAsistenciaSchema), registrarAsistenciaHandler);
+router.post(
+  "/",
+  authenticate,
+  requireRole("Docente"),
+  validate(RegistrarAsistenciaSchema),
+  registrarAsistenciaHandler,
+);
 
 /**
  * @openapi
@@ -70,6 +83,8 @@ router.post("/", validate(RegistrarAsistenciaSchema), registrarAsistenciaHandler
  *     description: Retorna un listado con las asignaturas del estudiante y el conteo de asistencias, inasistencias, tardanzas y justificaciones en cada una.
  *     tags:
  *       - Asistencia
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: estudiante_id
@@ -108,11 +123,13 @@ router.post("/", validate(RegistrarAsistenciaSchema), registrarAsistenciaHandler
  *                       clasesJustificadas:
  *                         type: string
  *                         example: "0"
+ *       401:
+ *         description: Token ausente, inválido o expirado
  *       404:
  *         description: Estudiante no encontrado
  *       500:
  *         description: Error interno del servidor
  */
-router.get("/estudiante/:estudiante_id", getResumenAsistenciaAlumnoHandler);
+router.get("/estudiante/:estudiante_id", authenticate, getResumenAsistenciaAlumnoHandler);
 
 export default router;

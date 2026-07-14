@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { validate } from "../middlewares/validate.middleware";
+import { authenticate, requireRole } from "../middlewares/auth.middleware";
 import {
   registrarAnotacionHandler,
   listarAnotacionesHandler,
@@ -46,7 +47,13 @@ const router = Router();
  *       404:
  *         description: Estudiante no encontrado o inactivo
  */
-router.post("/", validate(CrearAnotacionSchema), registrarAnotacionHandler);
+router.post(
+  "/",
+  authenticate,
+  requireRole("Docente"),
+  validate(CrearAnotacionSchema),
+  registrarAnotacionHandler,
+);
 
 /**
  * @openapi
@@ -98,6 +105,12 @@ router.post("/", validate(CrearAnotacionSchema), registrarAnotacionHandler);
  *       403:
  *         description: Usuario sin permisos
  */
-router.get("/", validate(ListarAnotacionesSchema), listarAnotacionesHandler);
+router.get(
+  "/",
+  authenticate,
+  requireRole("Docente"),
+  validate(ListarAnotacionesSchema),
+  listarAnotacionesHandler,
+);
 
 export default router;

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getAlumnosCurso } from "../controllers/cursos.controller";
+import { authenticate, requireRole } from "../middlewares/auth.middleware";
 
 const router = Router();
 
@@ -90,6 +91,6 @@ const router = Router();
  *           type: string
  *           example: "juan.perez@alumnos.cl"
  */
-router.get("/:id/alumnos", getAlumnosCurso);
+router.get("/:id/alumnos", authenticate, requireRole("Docente"), getAlumnosCurso);
 
 export default router;

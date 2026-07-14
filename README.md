@@ -26,9 +26,9 @@ Este es un microservicio construido con Node.js, Express y TypeScript, diseñado
 
 ## Scripts Disponibles
 
-- `npm run dev`: Inicia el servidor en modo desarrollo con `ts-node-dev`.
-- `npm run build`: Compila el código TypeScript a JavaScript en la carpeta `dist`.
-- `npm start`: Inicia el servidor utilizando el código compilado en `dist`.
+- `pnpm run dev`: Inicia el servidor en modo desarrollo con `ts-node-dev`.
+- `pnpm run build`: Compila el código TypeScript a JavaScript en la carpeta `dist`.
+- `pnpm start`: Inicia el servidor utilizando el código compilado en `dist`.
 
 ## Configuración
 
